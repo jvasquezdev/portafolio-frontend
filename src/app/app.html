@@ -1,15 +1,57 @@
-<main style="padding: 2rem; font-family: sans-serif;">
+<main style="padding: 2rem; font-family: sans-serif; max-width: 800px; margin: 0 auto;">
   <h1>{{ title }}</h1>
+  <p style="color: #666;">Orquestando 3 microservicios desde un solo cliente Angular.</p>
 
-  <section style="margin-top: 2rem; padding: 1rem; border: 1px solid #ccc;">
-    <h2>Respuesta del Backend:</h2>
+  <div style="margin-bottom: 2rem; display: flex; gap: 1rem;">
+    <button (click)="loadAspData()" [disabled]="activeBackend === 'ASP.NET'" style="padding: 10px 20px; cursor: pointer;">
+      1. Perfil (ASP.NET - 5000)
+    </button>
+    <button (click)="loadPythonData()" [disabled]="activeBackend === 'Python'" style="padding: 10px 20px; cursor: pointer;">
+      2. Algoritmo (Python - 8000)
+    </button>
+    <button disabled style="padding: 10px 20px; cursor: not-allowed; opacity: 0.5;">
+      3. Datos (Laravel - 8080)
+    </button>
+  </div>
 
-    @if (profileData) {
-      <pre style="background: #f4f4f4; padding: 1rem; border-radius: 5px;">{{ profileData | json }}</pre>
+  <section style="padding: 1.5rem; border: 2px solid #333; border-radius: 8px; background: #fafafa;">
+    <h2 style="margin-top: 0; color: #0056b3;">Conectado a: {{ activeBackend }}</h2>
+
+    <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #ddd;">
+      @if (activeBackend === 'ASP.NET') {
+        <p><strong>Traza de Ejecución:</strong> Angular ejecuta una petición HTTP GET hacia el puerto 5000. El servidor Kestrel de ASP.NET Core intercepta la petición, valida las políticas de CORS, ejecuta el <code>ProfileController</code> y retorna un objeto serializado en formato JSON estático.</p>
+      }
+      @if (activeBackend === 'Python') {
+        <p><strong>Traza de Ejecución:</strong> Angular solicita datos al puerto 8000. El servidor asíncrono Uvicorn (FastAPI) procesa en tiempo real los primeros 50 números de la secuencia de Fibonacci. Al recibir el JSON estructurado, Angular instancia <code>Chart.js</code> para renderizar la curva exponencial gráficamente.</p>
+      }
+    </div>
+
+    <h3>Respuesta del Servidor:</h3>
+    @if (isLoading) {
+      <p style="color: #d9534f; font-weight: bold;">Estableciendo conexión con el servidor...</p>
     } @else {
-      <p style="color: #666; font-style: italic;">
-        Intentando conectar con el backend (http://localhost:8000/api/profile)...
-      </p>
+      @if (responseData) {
+
+        @if (activeBackend === 'Python') {
+          <div style="background: white; padding: 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+
+            <div style="position: relative; width: 100%; height: 350px;">
+              <canvas id="fibonacciChart"></canvas>
+            </div>
+
+          </div>
+        }
+
+        <div style="margin-top: 1rem;">
+          <details>
+            <summary style="cursor: pointer; font-weight: bold; color: #555;">Ver JSON recibido</summary>
+            <pre style="background: #222; color: #0f0; padding: 1rem; border-radius: 5px; overflow-x: auto; margin-top: 0.5rem;">{{ responseData | json }}</pre>
+          </details>
+        </div>
+
+      } @else {
+        <p style="color: red;">Error: No se pudo establecer conexión con el backend. Consultar registro en consola (F12).</p>
+      }
     }
   </section>
 
