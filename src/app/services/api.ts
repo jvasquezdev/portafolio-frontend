@@ -15,7 +15,7 @@ export class Api {
 
   private aspUrl = 'http://localhost:5000/api';
   private pythonUrl = 'http://localhost:8000/api';
-  private laravelUrl = 'http://localhost:8080/api';
+  private laravelUrl = 'http://localhost:8081/api';
 
   /**
    * Realiza una petición GET al backend de ASP.NET para obtener los datos del perfil.
@@ -32,4 +32,15 @@ export class Api {
   getFibonacciFromPython(): Observable<any> {
     return this.http.get(`${this.pythonUrl}/fibonacci`);
   }
+
+  /**
+   * Realiza una petición GET al backend de Laravel (Puerto 8081)
+   * para obtener la colección de proyectos desde la base de datos MySQL.
+   * * @returns {Observable<any>} Un flujo observable que emite la respuesta HTTP
+   * conteniendo un objeto JSON con metadatos y el arreglo de proyectos.
+   */
+  getProjectsFromLaravel(): Observable<any> {
+    return this.http.get(`${this.laravelUrl}/projects`);
+  }
+
 }

@@ -9,7 +9,7 @@
     <button (click)="loadPythonData()" [disabled]="activeBackend === 'Python'" style="padding: 10px 20px; cursor: pointer;">
       2. Algoritmo (Python - 8000)
     </button>
-    <button disabled style="padding: 10px 20px; cursor: not-allowed; opacity: 0.5;">
+    <button (click)="loadLaravelData()" [disabled]="activeBackend === 'Laravel'" style="padding: 10px 20px; cursor: pointer;">
       3. Datos (Laravel - 8080)
     </button>
   </div>
@@ -24,6 +24,9 @@
       @if (activeBackend === 'Python') {
         <p><strong>Traza de Ejecución:</strong> Angular solicita datos al puerto 8000. El servidor asíncrono Uvicorn (FastAPI) procesa en tiempo real los primeros 50 números de la secuencia de Fibonacci. Al recibir el JSON estructurado, Angular instancia <code>Chart.js</code> para renderizar la curva exponencial gráficamente.</p>
       }
+      @if (activeBackend === 'Laravel') {
+        <p><strong>Traza de Ejecución:</strong> Angular realiza una petición GET al puerto 8080. El enrutador de Laravel dirige la llamada al <code>ProjectController</code>, el cual invoca al motor <i>Query Builder</i> para consultar la base de datos MySQL. Retorna la colección de registros formateada, y Angular itera sobre ella construyendo esta tabla dinámica.</p>
+      }
     </div>
 
     <h3>Respuesta del Servidor:</h3>
@@ -34,11 +37,37 @@
 
         @if (activeBackend === 'Python') {
           <div style="background: white; padding: 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1rem;">
-
             <div style="position: relative; width: 100%; height: 350px;">
               <canvas id="fibonacciChart"></canvas>
             </div>
+          </div>
+        }
 
+        @if (activeBackend === 'Laravel' && responseData.data) {
+          <div style="overflow-x: auto; margin-bottom: 1rem; background: white; padding: 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+              <thead>
+              <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                <th style="padding: 12px;">ID</th>
+                <th style="padding: 12px;">Proyecto</th>
+                <th style="padding: 12px;">Stack Tecnológico</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (project of responseData.data; track project.id) {
+                  <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px; color: #666;">#{{ project.id }}</td>
+                    <td style="padding: 12px;">
+                      <strong>{{ project.title }}</strong><br>
+                      <small style="color: #666;">{{ project.description }}</small>
+                    </td>
+                    <td style="padding: 12px;">
+                      <span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-family: monospace;">{{ project.tech_stack }}</span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
         }
 

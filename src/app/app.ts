@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { JsonPipe } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Api } from './services/api';
@@ -24,6 +24,7 @@ export class App implements OnInit {
   public activeBackend: string = 'ASP.NET';
   public responseData: any = null;
   public isLoading: boolean = true;
+  private cdr = inject(ChangeDetectorRef);
 
   /** Referencia a la instancia activa del gráfico para evitar duplicados en el DOM. */
   public chartInstance: any = null;
@@ -113,5 +114,35 @@ export class App implements OnInit {
       this.chartInstance.destroy();
       this.chartInstance = null;
     }
+  }
+
+  /**
+   * Orquesta la petición HTTP hacia el microservicio de Laravel.
+   * Actualiza el estado de la interfaz para renderizar la tabla de datos
+   * y fuerza una sincronización manual del DOM a través de ChangeDetectorRef.
+   * * @returns {void}
+   */
+  loadLaravelData(): void {
+    this.isLoading = true;
+    this.activeBackend = 'Laravel';
+
+    // Eliminamos la destrucción forzada del gráfico de Python basándonos
+    // en el principio de separación de responsabilidades. La limpieza profunda
+    // ya ocurre de forma aislada dentro de renderChart().
+
+    this.api.getProjectsFromLaravel().subscribe({
+      next: (response) => {
+        this.responseData = response;
+        this.isLoading = false;
+
+        // Sincroniza el Virtual DOM instantáneamente para renderizar la tabla @for
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Fallo en la comunicación con el microservicio Laravel:', err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 }
