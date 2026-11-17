@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, DatePipe } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Api } from './services/api';
 import { Chart, registerables } from 'chart.js';
@@ -14,7 +14,7 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [JsonPipe, RouterOutlet],
+  imports: [JsonPipe, DatePipe, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

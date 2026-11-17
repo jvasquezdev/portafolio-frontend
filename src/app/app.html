@@ -10,7 +10,7 @@
       2. Algoritmo (Python - 8000)
     </button>
     <button (click)="loadLaravelData()" [disabled]="activeBackend === 'Laravel'" style="padding: 10px 20px; cursor: pointer;">
-      3. Datos (Laravel - 8080)
+      3. Datos (Laravel - 8081)
     </button>
   </div>
 
@@ -25,7 +25,7 @@
         <p><strong>Traza de Ejecución:</strong> Angular solicita datos al puerto 8000. El servidor asíncrono Uvicorn (FastAPI) procesa en tiempo real los primeros 50 números de la secuencia de Fibonacci. Al recibir el JSON estructurado, Angular instancia <code>Chart.js</code> para renderizar la curva exponencial gráficamente.</p>
       }
       @if (activeBackend === 'Laravel') {
-        <p><strong>Traza de Ejecución:</strong> Angular realiza una petición GET al puerto 8080. El enrutador de Laravel dirige la llamada al <code>ProjectController</code>, el cual invoca al motor <i>Query Builder</i> para consultar la base de datos MySQL. Retorna la colección de registros formateada, y Angular itera sobre ella construyendo esta tabla dinámica.</p>
+        <p><strong>Traza de Ejecución:</strong> Angular realiza una petición GET al puerto 8081. El enrutador de Laravel dirige la llamada al <code>ProjectController</code>, el cual invoca al motor <i>Query Builder</i> para consultar la base de datos MySQL. Retorna la colección de registros formateada, y Angular itera sobre ella construyendo esta tabla dinámica.</p>
       }
     </div>
 
@@ -57,12 +57,17 @@
                 @for (project of responseData.data; track project.id) {
                   <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 12px; color: #666;">#{{ project.id }}</td>
+
+                    <!-- Cambiamos project.title por project.name -->
                     <td style="padding: 12px;">
-                      <strong>{{ project.title }}</strong><br>
-                      <small style="color: #666;">{{ project.description }}</small>
+                      <strong>{{ project.name }}</strong><br>
+                      <!-- Puedes usar created_at o omitirlo si no necesitas subtítulo -->
+                      <small style="color: #666;">Creado: {{ project.created_at | date:'shortDate' }}</small>
                     </td>
+
+                    <!-- Cambiamos project.tech_stack por project.stack -->
                     <td style="padding: 12px;">
-                      <span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-family: monospace;">{{ project.tech_stack }}</span>
+                      <span style="background: #e9ecef; padding: 4px 8px; border-radius: 4px; font-family: monospace;">{{ project.stack }}</span>
                     </td>
                   </tr>
                 }
